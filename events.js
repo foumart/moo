@@ -17,7 +17,7 @@ $(function() {
     avg = 0;
     avgs = [];
     var $benchmid = $('.bench-middle');
-    $benchmid.html(" - Avg:0.000");
+    $benchmid.html(" - AI:0.000");
   })
 
   $('.computer-guess-number').on('submit', function(e) {
