@@ -14,6 +14,10 @@ $(function() {
   $('.guess-you').on('click', function() {
     $('.main-menu').slideUp();
     $('.guesses-you').slideDown();
+    avg = 0;
+    avgs = [];
+    var $benchmid = $('.bench-middle');
+    $benchmid.html(" - Avg:0.000");
   })
 
   $('.computer-guess-number').on('submit', function(e) {
@@ -75,27 +79,66 @@ $(function() {
     var $output = $('.guess-you__result');
     var showPruned = $('.you-guess-number input[type="checkbox"]').is(':checked');
     var qset = allUniques.slice();
+    var newresult = "";
+    if ( isNaN(val) || allUniques.indexOf((val.toString()).length==3 ? "0"+val.toString() : val.toString()) == -1 ) {
+      for(var i = 0; i < tries.length; i++){
+        newresult += (nums[i].join(' ')) + ' | ' + tries[i] + "\n";
+      }
+      newresult += "\n"+val+" | Please enter a valid guess";
+      $output.text(newresult);
+      $output.html($output.html().replace(/\n/g,'<br/>'));
+      return false;
+    }
 
     $output.html('');
 
-    if ( isNaN(val) || allUniques.indexOf((val.toString()).length==3 ? "0"+val.toString() : val.toString()) == -1 ) {
-      $output.text("Please enter a valid guess")
-      return false;
-    }
-
-    if ( val == ansStr ) {
-      $output.text('You got it!');
-      return false;
-    }
-
-    var num = strNumToArray(val.toString());
+    var num = strNumToArray(val.toString().length==3 ? "0"+val : val.toString());
     qset = pruneSet(qset, num, ans, false, true, $output);
 
     tries.push($output.text());
     nums.push(num);
-    var newresult = "";
+
+    if ( val == ansStr ) {
+      for(var i = 0; i < tries.length; i++){
+        newresult += (nums[i].join(' ')) + ' | ' + tries[i] + (i < tries.length-1 ? "\n" : "");
+      }
+      newresult += 'Bulls: 4 Cows: 0\n\nYou got it!';
+      $output.text(newresult);
+      $output.html($output.html().replace(/\n/g,'<br/>'));
+
+      $('.guess-cta').hide();
+      $('.you-guess-number').hide();
+      $('.restart-game').show();
+      $('.restart-game').on('click', function() {
+        $output.text("");
+        $('.restart-game').hide();
+        $('.guess-cta').show();
+        $('.you-guess-number').show();
+        ansStr = allUniques[Math.floor(Math.random()*allUniques.length)];
+        ans = strNumToArray(ansStr);
+        tries = [];
+        nums = [];
+      })
+
+      avgs.push(tries.length);
+      avg = median(avgs);
+
+      avgindexes = getAvgIndexes(avgs);
+
+      var $benchmid = $('.bench-middle');
+      $benchmid.html(" - Score: "+avg.toFixed(3));
+
+      var $benchavg = $('.bench-avg');
+      $benchavg.html(avgindexes);
+
+      gg = [];
+      allUniques = genAll(N);
+
+      return false;
+    }
+    
     for(var i = 0; i < tries.length; i++){
-      newresult += nums[i].join(' ') + ' | ' + tries[i] + "\n";
+      newresult += (nums[i].join(' ')) + ' | ' + tries[i] + "\n";
     }
     $output.text(newresult);
 
