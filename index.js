@@ -1,7 +1,8 @@
-// All numbers to be stored as arrays, shown as numbers.
-// Represent as position:number
+var N = 4;
 
-var N = 3;
+var avg = 6.624;
+var avgs = [6.624];
+var avgindexes = [];
 
 function genAll (n) {
   var set = [];
@@ -19,7 +20,6 @@ function genAll (n) {
     if ( isUnique )
       set.push(num);
   }
-
   return set;
 }
 
@@ -35,7 +35,7 @@ function searchInHash (hash, pos, val) {
 function getHashTable (s) {
   var hash = [];
   s.forEach(function(num) {
-    for ( var i = 0; i < 3; i++ ) {
+    for ( var i = 0; i < 4; i++ ) {
       // { pos: i, val: num[i], count: 0 }
       var res = searchInHash(hash, i, num[i])
       if ( res ) res.count++
@@ -48,7 +48,6 @@ function getHashTable (s) {
     if ( a.count < b.count ) return -1
     return 0;
   })
-
   return hash;
 }
 
@@ -59,6 +58,9 @@ function printHash (hash) {
   })
   console.log(res);
 }
+
+var gg=[];
+var lastCow = false;
 
 function makeGuess (s, repeats) {
   if ( s.length == 1 )
@@ -82,6 +84,25 @@ function makeGuess (s, repeats) {
       num.push(sortedHash[i].val)
     i++;
   }
+  if(gg.indexOf(num.join(''))>=0 || lastCow){
+    lastCow = false;
+    var r1 = parseInt(Math.random()*9.99);
+    var r2 = parseInt(Math.random()*9.99);
+    while(r2 == r1){
+      r2 = parseInt(Math.random()*9.99);
+    }
+    var r3 = parseInt(Math.random()*9.99);
+    while(r3 == r1 || r3 == r2 ){
+      r3 = parseInt(Math.random()*9.99);
+    }
+    var r4 = parseInt(Math.random()*9.99); 
+    while(r4 == r1 || r4 == r2 || r4 == r3){
+      r4 = parseInt(Math.random()*9.99);
+    }
+    num = [r1, r2, r3, r4];
+    //console.log(num.join('') + "?")
+  }
+  gg.push(num.join(''));//console.log(num.join(''));
 
   return num;
 }
@@ -106,8 +127,9 @@ function pruneSet(set, guess, ans, debug, display, $to) {
   var response = respondToNum(ans, guess);
   if ( debug ) console.log(response);
   if ( display ) {
-    if ( ans.join('') != guess.join('') )
+    if ( ans.join('') != guess.join('') ) {
       $to.append('<div class="bc">Bulls: ' + response.bulls + ' Cows: ' + response.cows + '</div>');
+    }
   }
   var pruned = [];
   set.forEach(function(num, pos) {
@@ -116,6 +138,7 @@ function pruneSet(set, guess, ans, debug, display, $to) {
       pruned.push(num)
     }
   });
+  if(!response.bulls && response.cows == 1) lastCow = true;
   return pruned;
 }
 
@@ -167,7 +190,7 @@ function checkAll () {
   var histogram = {};
   allUniques.forEach(function(number) {
     num = strNumToArray(number);
-    times = playSingle(num)
+    times = playSingle(num)// true
 
     histogram[times] = histogram[times] ? histogram[times] + 1 : 1;
   })
@@ -182,7 +205,7 @@ function playSingle (ans, debug, display, $to) {
   do {
     guess = makeGuess(set2);
     if ( guesses.indexOf(guess.join('')) !== -1 ) {
-      guess = makeGuess(set2, true);
+      guess = makeGuess(set2);
     }
     guesses.push(guess.join(''));
     if ( debug ) console.log('guess - ', guess.join(''));
@@ -195,35 +218,48 @@ function playSingle (ans, debug, display, $to) {
   } while ( ( set2.join('') !== guess.join('') && set2.length ) && playedTimes < 50 )
 
 
-  console.log(playedTimes + ' guesses for ' + ans.join(''));
+  if ( debug ) console.log(playedTimes + ' guesses for ' + ans.join(''));
   if ( display ) $to.append('<div class="turns">Got it in ' + playedTimes + ' guesses.')
+
+  avgs.push(playedTimes);
+  avg = median(avgs);
+
+  avgindexes = getAvgIndexes(avgs);
+
+  var $benchmid = $('.bench-middle');
+  $benchmid.html(" - Avg:"+avg.toFixed(3));
+
+  var $benchavg = $('.bench-avg');
+  $benchavg.html(avgindexes);
+
+  gg = [];
+  allUniques = genAll(N);
   return playedTimes;
 }
 
-/*var set1 = allUniques.slice();
+function getAvgIndexes(arr){
+  var result = "<table width='100%' border=='1'><tr><td>0-3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>10+</td></tr>";
+  var index=[];
+  var indexes = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+  for(var i = 0; i < arr.length; i++){
+    if(index.indexOf(arr[i]) == -1) {
+      index.push(arr[i]);
+    }
+    indexes[arr[i]] += 1;
+  }
+  result += "<tr><td>"+(indexes[0] + indexes[1] + indexes[2] + indexes[3])+"</td>";
+  for(i = 4; i < 11; i++){
+    result += "<td>" + indexes[i] + "</td>";
+  }
+  var rr = 0;
+  for(i = 11; i < indexes.length; i++){
+    rr += indexes[i];
+  }
+  result += "<td>" + rr + "</td></tr></table>";
+  return result;
+}
 
-set1 = pruneSet(set1, [9, 0], [5, 7], true);
-console.log('set - ', set1.join(' '));
-
-set1 = pruneSet(set1, [8, 1], [5, 7], true);
-console.log('set - ', set1.join(' '));
-
-set1 = pruneSet(set1, [2, 3], [5, 7], true);
-console.log('set - ', set1.join(' '));
-
-set1 = pruneSet(set1, [4, 5], [5, 7], true);
-console.log('set - ', set1.join(' '));
-
-set1 = pruneSet(set1, [5, 7], [5, 7], true);
-console.log('set - ', set1.join(' '));
-
-
-console.log();
-console.log();
-console.log('---');
-console.log();*/
-
-// playSingle([0, 2, 6], true)
-// checkAll()
-
-// console.log(findUniqueGuess([243, 342, 432, 425, 142, 153]));
+function median(arr){
+  var sum = arr.reduce(function(a, b) { return a + b; }, 0);
+  return sum / arr.length;
+}
