@@ -1,7 +1,7 @@
 var N = 4;
 
-var avg = 6.624;
-var avgs = [6.624];
+var avg = 6.612;
+var avgs = [6.612];
 var avgindexes = [];
 
 function genAll (n) {
@@ -184,18 +184,6 @@ function strNumToArray (number) {
 
 
 var allUniques = genAll(N);
-
-function checkAll () {
-  var num, times;
-  var histogram = {};
-  allUniques.forEach(function(number) {
-    num = strNumToArray(number);
-    times = playSingle(num)// true
-
-    histogram[times] = histogram[times] ? histogram[times] + 1 : 1;
-  })
-  console.log(histogram);
-}
 
 function playSingle (ans, debug, display, $to) {
   var set2 = allUniques.slice();
