@@ -17,8 +17,7 @@ $(function() {
   })
 
   $('.computer-guess-number').on('submit', function(e) {
-    //$('.computer-guess-number').prop('disabled', true);
-    //e.preventDefault();
+    e.preventDefault();
     var val = parseFloat($('.computer-guess-number input[type="text"]').val().substr(0, 4));
     var $output = $('.guesses-computer__result');
     $output.html('');
@@ -67,6 +66,8 @@ $(function() {
 
   var ansStr = allUniques[Math.floor(Math.random()*allUniques.length)];
   var ans = strNumToArray(ansStr);
+  var tries = [];
+  var nums = [];
 
   $('.you-guess-number').on('submit', function(e) {
     e.preventDefault();
@@ -89,6 +90,16 @@ $(function() {
 
     var num = strNumToArray(val.toString());
     qset = pruneSet(qset, num, ans, false, true, $output);
+
+    tries.push($output.text());
+    nums.push(num);
+    var newresult = "";
+    for(var i = 0; i < tries.length; i++){
+      newresult += nums[i].join(' ') + ' | ' + tries[i] + "\n";
+    }
+    $output.text(newresult);
+
+    $output.html($output.html().replace(/\n/g,'<br/>'));
 
     if ( showPruned )
       $output.append('<div class="pruned">' + qset.join(' ') + '</div>');
