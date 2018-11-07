@@ -8,7 +8,7 @@
 <body>
 
   <div class="wrap">
-    <h1 class="title">MOO &middot; Bulls and Cows <span class="bench-middle"> - Avg: 6.624</span></h1>
+    <h1 class="title">MOO &middot; Bulls and Cows <span class="bench-middle"> - AI: 6.612</span></h1>
     <h2 class="subtitle"><span class="bench-avg"></span></h2>
     <div class="options main-menu">
       <div class="button benchmark">Benchmark AI</div>
@@ -37,8 +37,9 @@
       </div>
     </div>
     <div class="guesser guesses-you">
-      <p>The computer has initialized a random number for you to guess. Go ahead and enter guesses.</p>
-      
+      <div class="guess-cta">
+        <p>The computer has initialized a random number for you to guess. Go ahead and enter guesses.</p>
+      </div>
       <form class="you-guess-number">
         <input type="text">
         <button>Submit</button><br>
@@ -47,10 +48,9 @@
           <span>Show pruned sets?</span>
         </label>
       </form>
-
-    
       <div class="result guess-you__result">
       </div>
+      <button class="restart-game" style="display:none;">Restart</button>
     </div>
   </div>
 
@@ -58,7 +58,7 @@
     <div class="wrap">
       Made with love by Namanyay Goel &middot; <a href="https://github.com/namanyayg/moo">GitHub</a> &middot; <a href="http://projects.namanyayg.com/gyan">Other projects</a>
       <br/>
-      Forked by Noncho Savov &middot; <a href="https://github.com/namanyayg/moo">GitHub</a>
+      Forked by Noncho Savov &middot; <a href="https://github.com/foumart/moo">GitHub</a> &middot; <a href="https://www.foumartgames.com">FoumartGames</a>
     </div>
   </footer>
 
